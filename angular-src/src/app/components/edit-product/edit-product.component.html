@@ -1,0 +1,21 @@
+<div class="row hidden-xs-down">
+    <h1 class="shopping-head"> Edit Product Quanity </h1>
+</div>
+
+<div class="input-group">
+      <span class="input-group-btn">
+             <button type="button" class="btn btn-primary"  data-type="minus" 
+              					(click)="decrementQty()">
+                						<span class="glyphicon glyphicon-minus"></span>
+           	</button>
+       </span>
+          	<input type="text" style="width:50px"
+          					       class="form-control input-number" min="1" max="100"/>
+          					    
+          	<button type="button" class="btn btn-primary"  data-type="plus" 
+          					    (click)="incrementQty()">
+                	<span class="glyphicon glyphicon-plus"></span>
+            </button>
+             <button type="button" class="btn btn-primary pull right"  style="margin-left:7pt;" (click)="updateProduct()">Add</button>
+
+</div>

@@ -1,0 +1,8 @@
+input {
+  width: 250px;
+}
+
+.payment-message {
+  display: block;
+  height: 20px;
+}

@@ -1,0 +1,188 @@
+<div class="card" *ngIf="isDataLoading==true">
+    <h4 class="card-header">Loading...</h4>
+    <div class="card-block text-xs-center">
+        <i class="fa fa-circle-o-notch fa-spin fa-3x"></i>
+    </div>
+</div>
+
+<div class="row hidden-xs-down">
+    <h1 class="shopping-head"> Your Items in Cart </h1>
+</div>
+
+<div *ngIf="isDataLoading==false && selectedproducts.length==0" class="row center prod-name" style="text-align:center"> You have no item in your Bag. Please select products from the <a routerlink="/" href="/dashboard"> dashboard</a>.</div>
+
+<div class="row vspace" *ngIf="isDataLoading==false && selectedproducts.length>0">
+
+	<div class="col-md-12 col-xs-12 header-border hidden-xs-down">
+		<div class=" row">
+            <div class="col-md-3"> {{selectedproducts.length}} ITEMS</div>
+            <div class="col-md-9">
+            	<div class="col-md-6"> </div>
+                <!-- <div class="col-md-2 cell-size"> SIZE </div> -->
+                <div class="col-md-3 cell-qty"> QTY </div>
+                <div class="col-md-3"> PRICE </div>
+            </div>
+         </div> 
+	</div>
+	<!-- <div class="col-xs-12 header-border-alt hidden-md-up">
+        <div class="row">
+            <div class="col-xs-9 bold-text" style="text-align:left;padding-left:36px;font-size:18px;">
+                Your Items in Cart
+            </div>
+            <div class="col-xs-3" style="text-align:right"> {{selectedproducts.length}} ITEMS</div>
+        </div>
+    
+	</div> -->
+	<div class="col-md-12 col-xs-12 rowCover" *ngFor="let product of selectedproducts; let index=index; let odd=odd; let even=even;" [ngClass]="{ odd: odd, even: even }">
+		<div class="row rowBorder hidden-xs-down" *ngIf="product.info">
+			<div class="col-md-3">
+				<img src="{{product.info.image}}" style="width : 150px; height: 125pt;" />
+			</div>
+			<div class="col-md-9">
+                <div class="row">
+                    <div class="row">
+                        <div class="col-md-6 prod-name">  {{product.info.name | uppercase}} </div>
+                        <div class="col-md-4 prod-name">  {{product.qty }} </div>
+                        <!-- <div class="col-md-2 prod-size"> {{product.p_sizecode | uppercase}} </div> -->
+                        <!-- prod-qty -->
+                        <!-- <div class="col-md-4">
+                        	<div class="input-group" >
+          						<span class="input-group-btn">
+              					<button type="button" class="btn btn-primary"  data-type="minus" 
+              					(click)="decrementQty(product)">
+                						<span class="glyphicon glyphicon-minus"></span>
+              					</button>
+          						</span>
+          							<input type="text" [value]="product.qty" style="width:50px"
+          					       class="form-control input-number" min="1" max="100">
+          					    
+          					    <button type="button" class="btn btn-primary"  data-type="plus" 
+          					    (click)="incrementQty(product)">
+                						<span class="glyphicon glyphicon-plus"></span>
+              					</button>
+              					<button type="button" class="btn btn-primary pull right"  style="margin-left:7pt;" (click)="updateProduct(product)">Add</button>
+
+      						</div>
+                        </div> -->
+
+                        <div class="col-md-2 price-text"> 
+                        	<span class="price-value">{{product.info.price}}</span>
+              			</div>
+              			
+              			<!-- <div class="col-md-1">
+              				<button type="button" (click)="deleteProduct(product)" class="btn btn-primary"><span class="glyphicon glyphicon-remove"></span></button>
+              			</div> -->
+                    </div>
+                
+                    
+                </div>
+
+            </div>
+            <div class="row">
+            <!-- <a [routerLinkActive]="['active']" 
+                [routerLink]="['/edit-product',product.info._id]" (click)="modal.open();">Edit</a> -->
+            <a (click)="modal.open();loadProduct(product)">Edit</a>
+                <!-- <a  (click)="modal.open();">EditP</a> -->
+                | <a  (click)="deleteProduct(product)">Remove</a> 
+            </div>        
+		</div>
+	</div>
+</div>
+
+<div class="row" *ngIf="isDataLoading==false && selectedproducts.length>0">
+	<div class="row price-row">
+            <div class="col-md-7 col-xs-7 bold-text"> SUBTOTAL </div>
+            <div class="col-md-5 col-xs-5  lbl-amount price-text">
+                <span class="prod-currency">Rs </span>
+                <span class="price-value price-margin">{{amount.Total}}</span>
+            </div>
+    </div>
+   <!--  <div class="row price-row-2" *ngIf="amount.enableDiscount">
+            <div class="col-md-7 bold-text col-xs-7"> PROMOTION CODE <b>JF10</b> APPLIED </div>
+            <div class="col-md-5 col-xs-5 lbl-amount price-text">
+                <span> - </span>
+                <span class="prod-currency">$</span>
+                <span class="price-value price-margin">{{amount.discount}}</span>
+            </div>
+    </div> -->
+    <div class="row price-row-2">
+            <div class="col-md-7 col-xs-7">
+                <span class="bold-text">Delivery Charge </span><br />
+                <span class="light-text" *ngIf="amount.enableFreeDelivery">
+                    You qualify for free shipping <br />
+                    because your order is over 2000 Rs
+                </span>
+            </div>
+            <div class="col-md-5 col-xs-5 lbl-amount price-text" *ngIf="!amount.enableFreeDelivery">
+                <span class="prod-currency">Rs </span>
+                <span class="price-value price-margin">{{amount.shippingPrice}}</span>
+            </div>
+            <div class="col-md-5 col-xs-5 free" *ngIf="amount.enableFreeDelivery">
+                <span class="bold-text">FREE</span>
+            </div>
+    </div>
+    <div class="row price-row-3">
+            <div class="col-md-7 col-xs-7">
+                <span class="bolder-text">Total Amount to Pay </span> <br />
+            </div>
+            <div class="col-md-5 col-xs-5 lbl-amount price-text-bold">
+                <span class="prod-currency">Rs </span>
+                <span class="price-value price-margin">{{amount.amount}}</span>
+            </div>
+    </div> 
+	<!-- <div class="col-md-5 col-xs-5 lbl-amount price-text-bold">
+                <span class="prod-currency">$</span>
+                <span class="price-value price-margin">{{amount.amount}}</span>
+    </div> -->
+
+    <div class="row price-row-2 row-swap">
+        <div class="col-md-10 continue-shopping col-xs-12 centered top-margin"> 
+        	<a [routerLinkActive]="['active']" [routerLink]="['/dashboard']" > CONTINUE SHOPPING</a> </div>
+        <div class="col-md-2 col-xs-12 centered"> 
+        	<button class="btn-primary btn broad" (click)="onCheckout(amount.amount)"> CHECKOUT</button> 
+        </div>
+	</div>
+
+</div>
+
+
+
+
+<modal #modal>
+    <modal-header></modal-header>
+    <modal-body>
+
+        <table class="modal-table">
+            <tr>
+                <td>                        
+                <div class="modal-prod-name"> 
+                    <span class="modal-name">{{ name | uppercase }}
+                </span>
+                </div>
+                           
+                <div class="modal-price-text">
+                    <span class="modal-prod-currency"> Rs</span> 
+                    <span class="modal-price-value"> {{ price }}</span> 
+                </div>
+            
+                <div class="modal-center">
+                    Quantity:
+                        <select [(ngModel)]="qty">
+                            <option *ngFor="let qty of [1,2,3,4,5]" value={{qty}}>{{qty}}</option>
+                        </select>
+                </div>
+                <div class="modal-center">
+                    <button class="btn btn-primary" type="button" (click)="modal.close();updateProduct(product)">Edit</button>
+                </div>
+                            
+                         <!-- [disabled]="!isEditing"       
+ -->
+                </td>
+            </tr>
+        </table>
+        
+    </modal-body>
+
+
+</modal>
+
